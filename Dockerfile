@@ -13,15 +13,15 @@ ARG APP_BASE=
 ARG PUBLIC_APP_COLOR=blue
 ENV BODY_SIZE_LIMIT=15728640
 
-RUN --mount=type=cache,target=/app/.npm \
-        npm set cache /app/.npm && \
-        npm ci
+RUN --mount=type=cache,id=npm_cache,target=/app/.npm \
+    npm set cache /app/.npm &&
+    npm ci
 
 COPY --link --chown=1000 . .
 
-RUN git config --global --add safe.directory /app && \
-    PUBLIC_COMMIT_SHA=$(git rev-parse HEAD) && \
-    echo "PUBLIC_COMMIT_SHA=$PUBLIC_COMMIT_SHA" >> /app/.env && \
+RUN git config --global --add safe.directory /app &&
+    PUBLIC_COMMIT_SHA=$(git rev-parse HEAD) &&
+    echo "PUBLIC_COMMIT_SHA=$PUBLIC_COMMIT_SHA" >>/app/.env &&
     npm run build
 
 # mongo image
@@ -64,7 +64,7 @@ RUN useradd -m -u 1000 user
 USER user
 
 ENV HOME=/home/user \
-	PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH
 
 WORKDIR /app
 
