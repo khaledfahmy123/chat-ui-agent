@@ -15,9 +15,6 @@ import JSON5 from "json5";
 import { env } from "$env/dynamic/private";
 
 import jp from "jsonpath";
-import calculator from "./calculator";
-import directlyAnswer from "./directlyAnswer";
-import fetchUrl from "./web/url";
 import websearch from "./web/search";
 import { callSpace, getIpToken } from "./utils";
 import { uploadFile } from "../files/uploadFile";
@@ -27,6 +24,7 @@ import { ObjectId } from "mongodb";
 import { isValidOutputComponent, ToolOutputPaths } from "./outputs";
 import { downloadFile } from "../files/downloadFile";
 import { fileTypeFromBlob } from "file-type";
+import modelFitter from "./modelFitter";
 
 export type BackendToolContext = Pick<
 	TextGenerationContext,
@@ -127,7 +125,7 @@ export const configTools = z
 			}))
 	)
 	// add the extra hardcoded tools
-	.transform((val) => [...val, calculator, directlyAnswer, fetchUrl, websearch]);
+	.transform((val) => [...val, modelFitter, websearch]);
 
 export function getCallMethod(tool: Omit<BaseTool, "call">): BackendCall {
 	return async function* (params, ctx, uuid) {
